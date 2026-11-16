@@ -59,11 +59,83 @@ preview.width = TARGET_W;
 preview.height = TARGET_H;
 
 // ---------- Helpers ----------
-function setMsg(text, isError = false) {
+// ---------- Language ----------
+const I18N = {
+  es: {
+    title: 'Extractor de grafemas',
+    step1: '1. Sube tu imagen escaneada y recortada',
+    drop: 'Elije una imagen y suéltala aquí (PNG o JPEG, por lo menos de 1472×2152 px)',
+    step2: '2. Ajusta el umbral',
+    hint: 'Baja o sube el deslizador hasta que las guías desaparezcan, y los grafemas permanezcan sólidos y legibles.',
+    go: 'Generar imágenes',
+    processing: 'Procesando…',
+    step3: '3. Imágenes generadas',
+    download: 'Descargar ZIP',
+    unsupported: 'Formato no admitido. Usa PNG o JPEG.',
+    readError: 'No se pudo leer esa imagen. Prueba con otro archivo.',
+    tooSmall: 'La imagen mide {w}×{h}. Debe medir al menos {W}×{H}.',
+    loaded: '{name} cargada y redimensionada a {W}×{H}.',
+    cropError: 'Algo salió mal al recortar. Inténtalo de nuevo.',
+  },
+  en: {
+    title: 'Grapheme extractor',
+    step1: '1. Upload your scanned and cropped image',
+    drop: 'Choose an image or drop it here (PNG or JPEG, at least 1472×2152 px)',
+    step2: '2. Adjust the threshold',
+    hint: 'Move the slider down or up until the guides disappear and the graphemes stay solid and legible.',
+    go: 'Generate images',
+    processing: 'Processing…',
+    step3: '3. Generated images',
+    download: 'Download ZIP',
+    unsupported: 'Unsupported format. Use PNG or JPEG.',
+    readError: 'Could not read that image. Try another file.',
+    tooSmall: 'Image is {w}×{h}. It must be at least {W}×{H}.',
+    loaded: 'Loaded {name}, resized to {W}×{H}.',
+    cropError: 'Something went wrong while cropping. Please try again.',
+  },
+};
+
+let lang = 'es';
+try {
+  const saved = localStorage.getItem('lang');
+  if (saved === 'es' || saved === 'en') lang = saved;
+} catch { /* storage unavailable: keep default */ }
+
+const t = (key, vars = {}) =>
+  I18N[lang][key].replace(/\{(\w+)\}/g, (_, k) => vars[k]);
+
+let lastMsg = null; // { key, vars, isError }
+let busy = false;
+
+function renderMsg() {
   const el = $('msg');
-  el.textContent = text;
-  el.classList.toggle('error', isError);
+  el.textContent = lastMsg ? t(lastMsg.key, lastMsg.vars) : '';
+  el.classList.toggle('error', !!lastMsg?.isError);
 }
+
+function setMsg(key, vars = {}, isError = false) {
+  lastMsg = { key, vars, isError };
+  renderMsg();
+}
+
+function applyLanguage() {
+  document.documentElement.lang = lang;
+  document.title = t('title');
+  document.querySelectorAll('[data-i18n]').forEach((el) => {
+    el.textContent = t(el.dataset.i18n);
+  });
+  $('go').textContent = t(busy ? 'processing' : 'go');
+  renderMsg();
+  document.querySelectorAll('.lang button').forEach((b) =>
+    b.setAttribute('aria-pressed', String(b.dataset.lang === lang)));
+}
+
+document.querySelectorAll('.lang button').forEach((b) =>
+  b.addEventListener('click', () => {
+    lang = b.dataset.lang;
+    try { localStorage.setItem('lang', lang); } catch { /* ignore */ }
+    applyLanguage();
+  }));
 
 const toBlob = (canvas) =>
   new Promise((res, rej) => canvas.toBlob((b) => (b ? res(b) : rej(new Error('toBlob failed'))), 'image/png'));
@@ -81,18 +153,18 @@ async function loadImage(file) {
 async function handleFile(file) {
   if (!file) return;
   if (!/^image\/(png|jpe?g)$/.test(file.type)) {
-    setMsg('Unsupported format. Use PNG or JPEG.', true);
+    setMsg('unsupported', {}, true);
     return;
   }
   let bmp;
   try {
     bmp = await loadImage(file);
   } catch {
-    setMsg('Could not read that image. Try another file.', true);
+    setMsg('readError', {}, true);
     return;
   }
   if (bmp.width < TARGET_W || bmp.height < TARGET_H) {
-    setMsg(`Image is ${bmp.width}×${bmp.height}. It must be at least ${TARGET_W}×${TARGET_H}.`, true);
+    setMsg('tooSmall', { w: bmp.width, h: bmp.height, W: TARGET_W, H: TARGET_H }, true);
     bmp.close?.();
     return;
   }
@@ -115,7 +187,7 @@ async function handleFile(file) {
     gray[p] = 0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2];
   }
 
-  setMsg(`Loaded ${file.name}, resized to ${TARGET_W}×${TARGET_H}.`);
+  setMsg('loaded', { name: file.name, W: TARGET_W, H: TARGET_H });
   $('thresholdSection').hidden = false;
   $('resultSection').hidden = true;
   renderPreview();
@@ -149,7 +221,8 @@ $('go').addEventListener('click', async () => {
   if (!gray) return;
   const btn = $('go');
   btn.disabled = true;
-  btn.textContent = 'Processing…';
+  busy = true;
+  btn.textContent = t('processing');
 
   try {
     // Inverted: symbols white on black
@@ -194,10 +267,11 @@ $('go').addEventListener('click', async () => {
     $('resultSection').scrollIntoView({ behavior: 'smooth' });
   } catch (err) {
     console.error(err);
-    setMsg('Something went wrong while cropping. Please try again.', true);
+    setMsg('cropError', {}, true);
   } finally {
     btn.disabled = false;
-    btn.textContent = 'Get images';
+    busy = false;
+    btn.textContent = t('go');
   }
 });
 
@@ -223,3 +297,5 @@ const drop = $('drop');
 ['dragleave', 'drop'].forEach((t) =>
   drop.addEventListener(t, (e) => { e.preventDefault(); drop.classList.remove('over'); }));
 drop.addEventListener('drop', (e) => handleFile(e.dataTransfer.files[0]));
+
+applyLanguage();

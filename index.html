@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -8,20 +8,26 @@
 </head>
 <body>
   <main>
-    <h1>Extractor de grafemas</h1>
+    <header>
+      <h1 data-i18n="title">Extractor de grafemas</h1>
+      <div class="lang" role="group" aria-label="Idioma / Language">
+        <button type="button" data-lang="es" aria-pressed="true">ES</button>
+        <button type="button" data-lang="en" aria-pressed="false">EN</button>
+      </div>
+    </header>
 
     <section>
-      <h2>1. Sube tu imagen escaneada y recortada</h2>
+      <h2 data-i18n="step1">1. Sube tu imagen escaneada y recortada</h2>
       <label class="drop" id="drop">
         <input type="file" id="file" accept="image/png,image/jpeg,image/jpg">
-        <span>Elije una imagen y suéltala aquí (PNG o JPEG, por lo menos de 1472×2152 px)</span>
+        <span data-i18n="drop">Elije una imagen y suéltala aquí (PNG o JPEG, por lo menos de 1472×2152 px)</span>
       </label>
       <p id="msg" role="status"></p>
     </section>
 
     <section id="thresholdSection" hidden>
-      <h2>2. Ajusta el umbral</h2>
-      <p class="hint">Baja o sube el deslizador hasta que las guías desaparezcan, y los grafemas permanezcan sólidos y legibles.</p>
+      <h2 data-i18n="step2">2. Ajusta el umbral</h2>
+      <p class="hint" data-i18n="hint">Baja o sube el deslizador hasta que las guías desaparezcan, y los grafemas permanezcan sólidos y legibles.</p>
       <div class="slider">
         <input type="range" id="threshold" min="0" max="255" value="128">
         <output id="thresholdValue">128</output>
@@ -31,8 +37,8 @@
     </section>
 
     <section id="resultSection" hidden>
-      <h2>3. Imágenes generadas</h2>
-      <button id="download" type="button">Descargar ZIP</button>
+      <h2 data-i18n="step3">3. Imágenes generadas</h2>
+      <button id="download" type="button" data-i18n="download">Descargar ZIP</button>
       <div id="thumbs"></div>
     </section>
   </main>
