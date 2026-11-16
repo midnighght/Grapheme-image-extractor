@@ -15,8 +15,8 @@ const CROP = { offsetX: 16, offsetY: 21, size: 128 };
 
 // Template download link for each language
 const TEMPLATE_LINKS = {
-  es: 'https://raw.githubusercontent.com/midnighght/Grapheme-image-extractor/refs/heads/main/plantilla_letras_examen_IA.png',
-  en: 'https://raw.githubusercontent.com/midnighght/Grapheme-image-extractor/refs/heads/main/plantilla_letras_examen_IA_EN.png',
+  es: '#', // TODO: put the Spanish template URL here
+  en: '#', // TODO: put the English template URL here
 };
 
 // One name (without extension) per cell, read left to right, top to bottom.
@@ -202,6 +202,7 @@ async function handleFile(file) {
 
   setMsg('loaded', { name: file.name, W: TARGET_W, H: TARGET_H });
   $('thresholdSection').hidden = false;
+  $('templateNote').hidden = true; // they already have the template
   $('resultSection').hidden = true;
   renderPreview();
 }
