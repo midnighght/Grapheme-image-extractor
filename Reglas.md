@@ -39,4 +39,4 @@ Las letras con diacríticos (vocales con tilde y vocales con diéresis) son **op
 * Rellena las casillas con los símbolos indicados.
 * Escanea la hoja.
 * Recorta la imagen como se indica en la siguiente página.
-* Súbela a [enlace a la GitHub Page] y descarga tus imágenes listas y procesadas.
+* Súbela a [Grapheme image extractor](https://midnighght.github.io/Grapheme-image-extractor/) y descarga tus imágenes listas y procesadas.
