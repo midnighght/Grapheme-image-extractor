@@ -13,6 +13,12 @@ const GRID = {
 // Square cut inside each cell, offset relative to the cell's top-left corner
 const CROP = { offsetX: 16, offsetY: 21, size: 128 };
 
+// Template download link for each language
+const TEMPLATE_LINKS = {
+  es: 'https://raw.githubusercontent.com/midnighght/Grapheme-image-extractor/refs/heads/main/plantilla_letras_examen_IA.png',
+  en: 'https://raw.githubusercontent.com/midnighght/Grapheme-image-extractor/refs/heads/main/plantilla_letras_examen_IA_EN.png',
+};
+
 // One name (without extension) per cell, read left to right, top to bottom.
 const LETTERS = 'ABCDEFGHIJKLMNÑOPQRSTUVWXYZ'.normalize('NFC').split(''); // 27 letters
 const VOWELS = ['A', 'E', 'I', 'O', 'U'];
@@ -65,6 +71,9 @@ const I18N = {
     title: 'Extractor de grafemas',
     step1: '1. Sube tu imagen escaneada y recortada',
     drop: 'Elije una imagen y suéltala aquí (PNG o JPEG, por lo menos de 1472×2152 px)',
+    tplBefore: '¿No tienes la plantilla? Descárgala ',
+    tplLink: 'aquí',
+    tplAfter: '.',
     step2: '2. Ajusta el umbral',
     hint: 'Baja o sube el deslizador hasta que las guías desaparezcan, y los grafemas permanezcan sólidos y legibles.',
     go: 'Generar imágenes',
@@ -81,6 +90,9 @@ const I18N = {
     title: 'Grapheme extractor',
     step1: '1. Upload your scanned and cropped image',
     drop: 'Choose an image or drop it here (PNG or JPEG, at least 1472×2152 px)',
+    tplBefore: "Don't have the template? Download it ",
+    tplLink: 'here',
+    tplAfter: '.',
     step2: '2. Adjust the threshold',
     hint: 'Move the slider down or up until the guides disappear and the graphemes stay solid and legible.',
     go: 'Generate images',
@@ -125,6 +137,7 @@ function applyLanguage() {
     el.textContent = t(el.dataset.i18n);
   });
   $('go').textContent = t(busy ? 'processing' : 'go');
+  $('templateLink').href = TEMPLATE_LINKS[lang];
   renderMsg();
   document.querySelectorAll('.lang button').forEach((b) =>
     b.setAttribute('aria-pressed', String(b.dataset.lang === lang)));

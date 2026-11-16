@@ -39,3 +39,7 @@ header h1 { margin: 0; }
 .lang { display: flex; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; flex-shrink: 0; }
 .lang button { background: var(--surface); color: var(--muted); border-radius: 0; padding: .35rem .8rem; }
 .lang button[aria-pressed="true"] { background: var(--accent); color: var(--accent-fg); }
+
+/* Template download note */
+.template-note { margin: .75rem 0 0; color: var(--muted); }
+.template-note a { color: var(--accent); }
