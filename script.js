@@ -15,8 +15,8 @@ const CROP = { offsetX: 16, offsetY: 21, size: 128 };
 
 // Template download link for each language
 const TEMPLATE_LINKS = {
-  es: '#', // TODO: put the Spanish template URL here
-  en: '#', // TODO: put the English template URL here
+  es: 'https://raw.githubusercontent.com/midnighght/Grapheme-image-extractor/refs/heads/main/plantilla_letras_examen_IA.png',
+  en: 'https://raw.githubusercontent.com/midnighght/Grapheme-image-extractor/refs/heads/main/plantilla_letras_examen_IA_EN.png',
 };
 
 // One name (without extension) per cell, read left to right, top to bottom.
